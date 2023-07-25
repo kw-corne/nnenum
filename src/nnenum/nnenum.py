@@ -1,3 +1,4 @@
+
 '''
 nnenum vnnlib front end
 
@@ -8,6 +9,7 @@ June 2021
 '''
 
 import sys
+import ast
 
 import numpy as np
 
@@ -83,7 +85,7 @@ def set_image_settings():
     Settings.COMPRESS_INIT_BOX = True
     Settings.BRANCH_MODE = Settings.BRANCH_OVERAPPROX
     Settings.TRY_QUICK_OVERAPPROX = False
-    
+
     Settings.OVERAPPROX_MIN_GEN_LIMIT = np.inf
     Settings.SPLIT_IF_IDLE = False
     Settings.OVERAPPROX_LP_TIMEOUT = np.inf
@@ -117,9 +119,25 @@ def main():
         Settings.NUM_PROCESSES = processes
 
     if len(sys.argv) >= 7:
-        settings_str = sys.argv[6]
-    else:
-        settings_str = "auto"
+        config = ast.literal_eval(sys.argv[6])
+
+        for k, v in config.items():
+            setattr(Settings, k, v)
+    # else:
+    #     settings_str = "auto"
+
+    ####################################
+    ####################################
+    ####################################
+    # VNN-COMP 2022 SPECIFIC
+    
+    if Path(onnx_filename + ".converted").is_file():
+        onnx_filename = onnx_filename + ".converted"
+        print(f"NOTE: Using converted onnx path: {onnx_filename}")
+        
+    ####################################
+    ####################################
+    ####################################
 
     ####################################
     ####################################
@@ -145,21 +163,21 @@ def main():
 
     result_str = 'none' # gets overridden
 
-    num_inputs = len(spec_list[0][0])
-
-    if settings_str == "auto":
-        if num_inputs < 700:
-            set_control_settings()
-        else:
-            set_image_settings()
-    elif settings_str == "control":
-        set_control_settings()
-    elif settings_str == "image":
-        set_image_settings()
-    else:
-        assert settings_str == "exact"
-        set_exact_settings()
-
+    # num_inputs = len(spec_list[0][0])
+    #
+    # if settings_str == "auto":
+    #     if num_inputs < 700:
+    #         set_control_settings()
+    #     else:
+    #         set_image_settings()
+    # elif settings_str == "control":
+    #     set_control_settings()
+    # elif settings_str == "image":
+    #     set_image_settings()
+    # else:
+    #     assert settings_str == "exact"
+    #     set_exact_settings()
+    #
     for init_box, spec in spec_list:
         init_box = np.array(init_box, dtype=input_dtype)
 
@@ -225,3 +243,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+   main()
