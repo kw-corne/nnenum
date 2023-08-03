@@ -124,14 +124,18 @@ def main():
         Settings.NUM_PROCESSES = processes
 
     if len(sys.argv) >= 7:
-        config = ast.literal_eval(sys.argv[6])
+        settings_str = sys.argv[6]
+    else:
+        settings_str = "auto"
 
-        for k, v in config.items():
-            if v == "_inf":
-                v = np.inf
-            setattr(Settings, k, v)
-    # else:
-    #     settings_str = "auto"
+    if len(sys.argv) >= 8:
+        config = ast.literal_eval(sys.argv[7])
+
+        if settings_str.lower() == "none":
+            for k, v in config.items():
+                if v == "_inf":
+                    v = np.inf
+                setattr(Settings, k, v)
 
     ####################################
     ####################################
@@ -170,21 +174,22 @@ def main():
 
     result_str = "none"  # gets overridden
 
-    # num_inputs = len(spec_list[0][0])
-    #
-    # if settings_str == "auto":
-    #     if num_inputs < 700:
-    #         set_control_settings()
-    #     else:
-    #         set_image_settings()
-    # elif settings_str == "control":
-    #     set_control_settings()
-    # elif settings_str == "image":
-    #     set_image_settings()
-    # else:
-    #     assert settings_str == "exact"
-    #     set_exact_settings()
-    #
+    if settings_str != "none":
+        num_inputs = len(spec_list[0][0])
+
+        if settings_str == "auto":
+            if num_inputs < 700:
+                set_control_settings()
+            else:
+                set_image_settings()
+        elif settings_str == "control":
+            set_control_settings()
+        elif settings_str == "image":
+            set_image_settings()
+        else:
+            assert settings_str == "exact"
+            set_exact_settings()
+
     for init_box, spec in spec_list:
         init_box = np.array(init_box, dtype=input_dtype)
 
