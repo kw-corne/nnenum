@@ -133,6 +133,11 @@ def main():
 
         if settings_str.lower() == "none":
             for k, v in config.items():
+                if (
+                    k == "INF_OVERAPPROX_LP_TIMEOUT"
+                    or k == "INF_OVERAPPROX_MIN_GEN_LIMIT"
+                ):
+                    continue
                 if v == "_inf":
                     v = np.inf
                 setattr(Settings, k, v)
